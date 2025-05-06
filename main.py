@@ -7,6 +7,7 @@ from openai import OpenAI
 
 from genpipe.distill import distill
 from genpipe.merge import merge
+from genpipe.transform import transform
 
 load_dotenv()
 
@@ -16,6 +17,10 @@ args_parser.add_argument("--model", type=str)
 args_parser.add_argument("--thinking", action="store_true")
 args_parser.add_argument("--budget_tokens", type=int, default=4 * 1000)
 args_parser.add_argument("--max_tokens", type=int, default=32 * 1000)
+args_parser.add_argument("--domain", type=str)
+args_parser.add_argument("--cat", type=str)
+args_parser.add_argument("--source", type=str)
+args_parser.add_argument("--version", type=str)
 args = args_parser.parse_args()
 
 
@@ -42,7 +47,20 @@ def main():
         num_workers=32,
     )
     # merge data
-    merge(os.path.join(args.dir, "output"), os.path.join(args.dir, "merged"))
+    merge(
+        os.path.join(args.dir, "output"),
+        os.path.join(args.dir, "merged"),
+    )
+    # transfrom data
+    transform(
+        os.path.join(args.dir, "merged"),
+        os.path.join(args.dir, "transformed"),
+        domain=args.domain,
+        cat=args.cat,
+        source=args.source,
+        version=args.version,
+        budget_tokens=args.budget_tokens,
+    )
 
 
 if __name__ == "__main__":

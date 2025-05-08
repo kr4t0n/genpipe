@@ -19,6 +19,7 @@ def _print_delimiter():
 def _distill(
     llm: OpenAI,
     model: str,
+    system: str | None,
     template: str,
     dst: str,
     thinking: bool,
@@ -28,7 +29,16 @@ def _distill(
 ) -> None:
     _, row = df_row
     prompt = template.format(**row)
-    messages = [{"role": "user", "content": prompt}]
+
+    if system is not None:
+        messages = [
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ]
+    else:
+        messages = [
+            {"role": "user", "content": prompt},
+        ]
 
     try:
         answer, reasoning = call(
@@ -42,6 +52,7 @@ def _distill(
 
         data = {
             **row,
+            "system": system,
             "prompt": prompt,
             "answer": answer,
             "reasoning": reasoning,
@@ -57,6 +68,7 @@ def distill(
     llm: OpenAI,
     model: str,
     df: DataFrame,
+    system: str | None,
     template: str,
     dst: str = "output",
     thinking: bool = False,
@@ -82,7 +94,17 @@ def distill(
     os.makedirs(dst, exist_ok=True)
     print(f"distilling data to {dst}")
     thread_map(
-        partial(_distill, llm, model, template, dst, thinking, budget_tokens, max_tokens),
+        partial(
+            _distill,
+            llm,
+            model,
+            system,
+            template,
+            dst,
+            thinking,
+            budget_tokens,
+            max_tokens,
+        ),
         df.iterrows(),
         total=len(df),
         max_workers=num_workers,

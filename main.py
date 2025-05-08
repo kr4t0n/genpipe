@@ -17,10 +17,7 @@ args_parser.add_argument("--model", type=str)
 args_parser.add_argument("--thinking", action="store_true")
 args_parser.add_argument("--budget_tokens", type=int, default=4 * 1000)
 args_parser.add_argument("--max_tokens", type=int, default=32 * 1000)
-args_parser.add_argument("--domain", type=str)
-args_parser.add_argument("--cat", type=str)
-args_parser.add_argument("--source", type=str)
-args_parser.add_argument("--version", type=str)
+args_parser.add_argument("--num_workers", type=int, default=32)
 args = args_parser.parse_args()
 
 
@@ -31,6 +28,11 @@ def main():
 
     # read metadata
     df = pd.read_csv(os.path.join(args.dir, "meta.csv"))
+    if os.path.exists(os.path.join(args.dir, "system.txt")):
+        with open(os.path.join(args.dir, "system.txt")) as f:
+            system = f.read()
+    else:
+        system = None
     with open(os.path.join(args.dir, "template.txt")) as f:
         template = f.read()
 
@@ -38,6 +40,7 @@ def main():
     distill(
         llm=OpenAI(),
         model=args.model,
+        system=system,
         template=template,
         df=df,
         dst=os.path.join(args.dir, "output"),

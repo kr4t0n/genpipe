@@ -79,6 +79,7 @@ def distill(
     print(f"data size: {len(df)}")
     _print_delimiter()
 
+    print(f"system is:\n{system}")
     print(f"template is:\n{template}")
     _print_delimiter()
 

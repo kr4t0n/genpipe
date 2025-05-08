@@ -51,16 +51,6 @@ def main():
         os.path.join(args.dir, "output"),
         os.path.join(args.dir, "merged"),
     )
-    # transfrom data
-    transform(
-        os.path.join(args.dir, "merged"),
-        os.path.join(args.dir, "transformed"),
-        domain=args.domain,
-        cat=args.cat,
-        source=args.source,
-        version=args.version,
-        budget_tokens=args.budget_tokens,
-    )
 
 
 if __name__ == "__main__":

@@ -31,14 +31,51 @@ def _distill(
     prompt = template.format(**row)
 
     if system is not None:
-        messages = [
-            {"role": "system", "content": system},
-            {"role": "user", "content": prompt},
-        ]
+        if "image" in row:
+            messages = [
+                {"role": "system", "content": system},
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/png",
+                                "data": row["image"],
+                            },
+                        },
+                        {"type": "text", "text": prompt},
+                    ],
+                },
+            ]
+        else:
+            messages = [
+                {"role": "system", "content": system},
+                {"role": "user", "content": prompt},
+            ]
     else:
-        messages = [
-            {"role": "user", "content": prompt},
-        ]
+        if "image" in row:
+            messages = [
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image",
+                            "source": {
+                                "type": "base64",
+                                "media_type": "image/png",
+                                "data": row["image"],
+                            },
+                        },
+                        {"type": "text", "text": prompt},
+                    ],
+                }
+            ]
+        else:
+            messages = [
+                {"role": "user", "content": prompt},
+            ]
 
     try:
         answer, reasoning = call(

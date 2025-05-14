@@ -47,7 +47,7 @@ def main():
         thinking=args.thinking,
         budget_tokens=args.budget_tokens,
         max_tokens=args.max_tokens,
-        num_workers=32,
+        num_workers=args.num_workers,
     )
     # merge data
     merge(

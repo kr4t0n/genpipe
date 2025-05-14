@@ -23,11 +23,11 @@ args = args_parser.parse_args()
 
 def main():
     # check working directory
-    assert "meta.csv" in os.listdir(args.dir)
+    assert "meta.parquet" in os.listdir(args.dir)
     assert "template.txt" in os.listdir(args.dir)
 
     # read metadata
-    df = pd.read_csv(os.path.join(args.dir, "meta.csv"))
+    df = pd.read_parquet(os.path.join(args.dir, "meta.parquet"))
     if os.path.exists(os.path.join(args.dir, "system.txt")):
         with open(os.path.join(args.dir, "system.txt")) as f:
             system = f.read()
